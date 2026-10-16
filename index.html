@@ -30,7 +30,24 @@ button.active{background:#263f35;color:white}
 <main id="catalog"></main>
 <script>
 const products = [
-  // Inserirai qui i tuoi prodotti, foto e prezzi.
+{
+  name: "CALI USA,
+  category: "WITHE RUNTZ",
+  video: "WhatsApp Video 2026-10-16 at 10.36.35 (1).mp4",
+  prices: "10g 120€  12€/g | 25g 250€  10€/g | 50g 420€  8,2€/g | 100g 720€  7,2€/g | "
+},
+{
+  name: "Dry Premium",
+  category: "Sushi Farmz",
+  video: "WhatsApp Video 2026-10-16 at 10.36.35.mp4",
+  prices: "10g 80€  8€/g | 25g 180€  7,2€/g | 50g 290€  5,8€/g | 100g 480€  4,8€/g |"
+},
+{
+  name: "Static Premium",
+  category: "Cheese / Fraisee",
+  video: "WhatsApp Video 2026-10-16 at 10.40.11.mp4",
+  prices: "10g 110€  11€/g | 25g 230€  9.2€/g | 50g 390€  7,8€/g | 100g 680€  6,8€/g |"
+}
 ];
 const catalog=document.getElementById('catalog');
 const nav=document.getElementById('categories');
@@ -52,17 +69,34 @@ function render(){
   e.textContent=products.length?'Nessun prodotto trovato':'Catalogo pronto: aggiungi i tuoi prodotti nel codice.';
   catalog.appendChild(e);return;
  }
- list.forEach(p=>{
-  const card=document.createElement('article');card.className='product';
-  const img=document.createElement('img');img.src=p.image||'';img.alt=p.name;
-  const d=document.createElement('div');d.className='details';
-  const h=document.createElement('h3');h.textContent=p.name;
-  const price=document.createElement('div');price.className='price';
-  price.textContent=Number(p.price).toLocaleString('it-IT',{style:'currency',currency:'EUR'});
-  d.append(h);
-  if(p.description){const desc=document.createElement('p');desc.textContent=p.description;d.append(desc)}
-  d.append(price);card.append(img,d);catalog.appendChild(card);
- });
+ list.forEach(p => {
+  const card = document.createElement('article');
+  card.className = 'product';
+
+  if (p.video) {
+    const video = document.createElement('video');
+    video.src = encodeURI(p.video);
+    video.controls = true;
+    video.playsInline = true;
+    video.preload = 'metadata';
+    video.style.width = '100%';
+    card.appendChild(video);
+  }
+
+  const d = document.createElement('div');
+  d.className = 'details';
+
+  const h = document.createElement('h3');
+  h.textContent = p.name;
+
+  const price = document.createElement('div');
+  price.className = 'price';
+  price.textContent = p.prices;
+
+  d.append(h, price);
+  card.appendChild(d);
+  catalog.appendChild(card);
+});
 }
 search.addEventListener('input',render);
 if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand()}
