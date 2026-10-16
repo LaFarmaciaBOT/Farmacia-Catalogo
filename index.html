@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Farmacia - Catalogo</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+body{margin:0;font-family:Arial;background:#f7f5f2;color:#222}
+header{padding:24px 18px}
+h1{margin:0 0 8px}
+input{box-sizing:border-box;width:100%;padding:13px;border:1px solid #ddd;border-radius:12px}
+.search{padding:0 16px 14px}
+#categories{display:flex;gap:8px;overflow:auto;padding:0 16px 16px}
+button{padding:9px 14px;border:1px solid #ddd;border-radius:22px;background:white}
+button.active{background:#263f35;color:white}
+#catalog{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 14px}
+.product{border-radius:14px;overflow:hidden;background:white;border:1px solid #eee}
+.product img{width:100%;aspect-ratio:1;object-fit:cover;background:#eee}
+.details{padding:11px}
+.details h3{font-size:15px;margin:0 0 8px}
+.price{font-size:17px;font-weight:bold}
+.empty{grid-column:1/-1;text-align:center;padding:40px 12px;color:#777}
+</style>
+</head>
+<body>
+<header><h1>La Farmacia</h1><p>Il nostro catalogo</p></header>
+<div class="search"><input id="search" placeholder="Cerca un prodotto..."></div>
+<nav id="categories"></nav>
+<main id="catalog"></main>
+<script>
+const products = [
+  // Inserirai qui i tuoi prodotti, foto e prezzi.
+];
+const catalog=document.getElementById('catalog');
+const nav=document.getElementById('categories');
+const search=document.getElementById('search');
+let selected='Tutti';
+function render(){
+ const cats=['Tutti',...new Set(products.map(p=>p.category).filter(Boolean))];
+ nav.replaceChildren();
+ cats.forEach(c=>{
+  const b=document.createElement('button');
+  b.textContent=c;b.className=c===selected?'active':'';
+  b.onclick=()=>{selected=c;render()};
+  nav.appendChild(b);
+ });
+ catalog.replaceChildren();
+ const list=products.filter(p=>(selected==='Tutti'||p.category===selected)&&p.name.toLowerCase().includes(search.value.toLowerCase()));
+ if(!list.length){
+  const e=document.createElement('div');e.className='empty';
+  e.textContent=products.length?'Nessun prodotto trovato':'Catalogo pronto: aggiungi i tuoi prodotti nel codice.';
+  catalog.appendChild(e);return;
+ }
+ list.forEach(p=>{
+  const card=document.createElement('article');card.className='product';
+  const img=document.createElement('img');img.src=p.image||'';img.alt=p.name;
+  const d=document.createElement('div');d.className='details';
+  const h=document.createElement('h3');h.textContent=p.name;
+  const price=document.createElement('div');price.className='price';
+  price.textContent=Number(p.price).toLocaleString('it-IT',{style:'currency',currency:'EUR'});
+  d.append(h);
+  if(p.description){const desc=document.createElement('p');desc.textContent=p.description;d.append(desc)}
+  d.append(price);card.append(img,d);catalog.appendChild(card);
+ });
+}
+search.addEventListener('input',render);
+if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand()}
+render();
+</script>
+</body>
+</html>
